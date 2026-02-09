@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+/* Reset y tipografía base */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", sans-serif; /* Tipografía Material UI */
+  background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%);
+  background-color: #0d0d0d; /* fallback sólido */
+  color: #f5f5f5;
+  min-height: 100%;
+}
+
+/* Evita “rebote” mostrando blanco */
+body {
+  overscroll-behavior-y: none;
+}
+
+/* Scroll bar custom (oscuro, estilo neutro) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0e0e10;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #3a3a3f, #1f1f23);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #4a4a50, #242428);
+}
+
+/* Headings con glow (más sobrio, casi blanco) */
+h1,
+h2,
+h3,
+h4 {
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.55);
+}
+
+/* Links */
+a {
+  color: #fff;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+a:hover {
+  color: #d6d6d8;
+  text-shadow: none;
+}
+
+/* Imágenes optimizadas (para cuando uses <Image />) */
+img,
+.Image {
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+}
+
+/* Secciones */
+section {
+  padding: 4rem 2rem;
+}
