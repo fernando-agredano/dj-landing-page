@@ -1,53 +1,76 @@
 # 🤝 Contributing
 
-Gracias por tu interés en contribuir a este proyecto.
+Gracias por tu interés en este repositorio.
 
-Este repositorio corresponde a un **sistema profesional de portafolio, agenda y contacto para DJs**, desarrollado como proyecto personal/comercial.
+Este proyecto corresponde a una **aplicación web desarrollada para un DJ real**, realizada como proyecto profesional.  
+El cliente ha dado su consentimiento para que el código sea **público**, con el objetivo de que reclutadores y otros desarrolladores puedan **analizar la arquitectura, el diseño y las decisiones técnicas** tomadas durante el desarrollo.
 
 ---
 
 ## 📌 Estado del proyecto
 
-Actualmente, este proyecto **no acepta contribuciones externas activas**.
+Este proyecto **no acepta contribuciones externas**.
 
-El código es mantenido directamente por el autor para garantizar:
+El código se mantiene de forma individual para preservar:
 
-- Consistencia visual
-- Estabilidad funcional
-- Seguridad en la base de datos y el sistema de correos
+- La coherencia del diseño y la experiencia visual
+- La lógica funcional original
+- La integridad del sistema y su propósito demostrativo
+
+No se aceptarán *Pull Requests* ni nuevas funcionalidades externas.
+
+---
+
+## 👀 Uso del repositorio
+
+Puedes:
+
+- Clonar el repositorio
+- Analizar el código
+- Usarlo como referencia técnica o educativa
+- Crear tu **propia versión personalizada** para aprendizaje o portfolio
+
+No está permitido:
+
+- Utilizar este proyecto (o versiones derivadas) con fines comerciales
+- Revender el código o la aplicación
+- Usar el proyecto para generar ingresos directos o indirectos
+- Presentarlo como un producto propio para clientes
 
 ---
 
 ## 🐞 Reporte de errores
 
-Si detectas un bug o comportamiento inesperado, puedes:
+Si detectas algún bug o comportamiento inesperado, puedes abrir un **Issue** incluyendo:
 
-1. Abrir un **Issue** en GitHub
-2. Incluir:
-   - Descripción clara del problema
-   - Pasos para reproducirlo
-   - Capturas de pantalla (si aplica)
-   - Entorno (local / producción)
+- Descripción clara del problema
+- Pasos para reproducirlo
+- Capturas de pantalla (si aplica)
+- Entorno donde ocurre (local / producción)
 
 ---
 
-## 💡 Sugerencias y mejoras
+## 💡 Sugerencias
 
-Las sugerencias son bienvenidas.
+Las sugerencias técnicas o de mejora son bienvenidas como feedback.
 
-Puedes abrir un **Issue** con la etiqueta `enhancement` describiendo:
+Puedes abrir un **Issue** con la etiqueta `enhancement` explicando:
 
-- El problema que quieres resolver
-- La mejora propuesta
-- Por qué consideras que aporta valor
+- Qué aspecto podría mejorarse
+- La idea propuesta
+- Por qué consideras que sería una mejora
 
----
-
-## 🔐 Uso del código
-
-El uso del código está regulado por la licencia del proyecto.
-Consulta el archivo **LICENSE** para más información.
+Ten en cuenta que las sugerencias **no implican que serán implementadas**.
 
 ---
 
-Gracias por tu interés y apoyo 🙌
+## 🔐 Licencia
+
+El uso de este código está regulado por la licencia del proyecto.  
+Consulta el archivo **LICENSE** para conocer los términos exactos.
+
+---
+
+Gracias por tomarte el tiempo de revisar este proyecto 🙌  
+Si eres reclutador, espero que el código te ayude a evaluar mi experiencia y enfoque profesional.
+
