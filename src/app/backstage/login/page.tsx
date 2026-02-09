@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import React, { Suspense, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import styles from "./login.module.css";
 
@@ -48,7 +48,11 @@ function IconArrow(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-export default function BackstageLoginPage() {
+/**
+ * OJO: useSearchParams() debe vivir dentro de un Suspense boundary en Next 15+
+ * para evitar el error "missing-suspense-with-csr-bailout".
+ */
+function BackstageLoginInner() {
   const [pin, setPin] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -75,8 +79,7 @@ export default function BackstageLoginPage() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError(data?.error || "PIN incorrecto");
-        setLoading(false);
+        setError((data as { error?: string })?.error || "PIN incorrecto");
         return;
       }
 
@@ -200,5 +203,13 @@ export default function BackstageLoginPage() {
         </div>
       </section>
     </main>
+  );
+}
+
+export default function BackstageLoginPage() {
+  return (
+    <Suspense fallback={<div />}>
+      <BackstageLoginInner />
+    </Suspense>
   );
 }
