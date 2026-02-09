@@ -9,11 +9,14 @@ function isEmail(s: string) {
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json().catch(() => null);
+    const body: unknown = await req.json().catch(() => null);
 
-    const name = String(body?.name ?? "").trim();
-    const email = String(body?.email ?? "").trim();
-    const message = String(body?.message ?? "").trim();
+    const b =
+      body && typeof body === "object" ? (body as Record<string, unknown>) : null;
+
+    const name = String(b?.name ?? "").trim();
+    const email = String(b?.email ?? "").trim();
+    const message = String(b?.message ?? "").trim();
 
     if (!name || !email || !message) {
       return NextResponse.json(
@@ -36,7 +39,8 @@ export async function POST(req: Request) {
     const SMTP_PASS = process.env.SMTP_PASS;
 
     // A dónde llega el correo (email destino)
-    const CONTACT_TO = process.env.CONTACT_TO || "produccionesbiosfera@gmail.com";
+    const CONTACT_TO =
+      process.env.CONTACT_TO || "produccionesbiosfera@gmail.com";
     // De quién “sale” (normalmente debe ser el mismo SMTP_USER o un alias permitido)
     const CONTACT_FROM = process.env.CONTACT_FROM || SMTP_USER;
 
@@ -88,7 +92,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ ok: true });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("CONTACT ERROR:", err);
     return NextResponse.json(
       { ok: false, error: "No se pudo enviar el mensaje." },

@@ -4,7 +4,22 @@ import { sql } from "@/lib/db";
 type EventStatus = "Reservado" | "Tentativo";
 type EventType = "Club" | "Festival" | "Privado";
 
-function mapRow(row: any) {
+/**
+ * Tipado mínimo para las filas devueltas por la DB.
+ * Ajusta si tu driver devuelve `id` como number, etc.
+ */
+type EventRow = {
+  id: string | number;
+  status: EventStatus;
+  type: EventType;
+  date: string | Date;
+  start_time: string | Date | number;
+  title: string | null;
+  venue: string | null;
+  city: string | null;
+};
+
+function mapRow(row: EventRow) {
   // Date llega como Date o string según driver, aseguramos YYYY-MM-DD
   const date =
     typeof row.date === "string"
@@ -18,9 +33,9 @@ function mapRow(row: any) {
       : String(row.start_time).slice(0, 5);
 
   return {
-    id: row.id,
-    status: row.status as EventStatus,
-    type: row.type as EventType,
+    id: String(row.id),
+    status: row.status,
+    type: row.type,
     date,
     startTime,
     title: row.title ?? "",
@@ -32,16 +47,16 @@ function mapRow(row: any) {
 export async function GET() {
   try {
     // Filtra por dia
-    const rows = await sql`
+    const rows = (await sql`
       SELECT id, status, type, date, start_time, title, venue, city
       FROM events
       WHERE date >= (now() AT TIME ZONE 'America/Mexico_City')::date
       ORDER BY date ASC, start_time ASC
-    `;
+    `) as EventRow[];
 
     const events = rows.map(mapRow);
     return NextResponse.json({ ok: true, events });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("GET /api/events error:", err);
     return NextResponse.json(
       { ok: false, error: "Error consultando eventos" },
@@ -52,46 +67,68 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json().catch(() => null);
+    const body: unknown = await req.json().catch(() => null);
 
-    if (!body) {
+    if (!body || typeof body !== "object") {
       return NextResponse.json(
         { ok: false, error: "Body inválido" },
         { status: 400 }
       );
     }
 
-    const status = body.status as EventStatus;
-    const type = body.type as EventType;
-    const date = String(body.date || "");
-    const startTime = String(body.startTime || "");
-    const title = String(body.title || "");
-    const venue = String(body.venue || "");
-    const city = String(body.city || "");
+    const b = body as Record<string, unknown>;
 
-    if (!date) return NextResponse.json({ ok: false, error: "Fecha requerida" }, { status: 400 });
-    if (!startTime) return NextResponse.json({ ok: false, error: "Hora requerida" }, { status: 400 });
-    if (!city.trim()) return NextResponse.json({ ok: false, error: "Ciudad requerida" }, { status: 400 });
+    const status = b.status as EventStatus;
+    const type = b.type as EventType;
+    const date = String(b.date ?? "");
+    const startTime = String(b.startTime ?? "");
+    const title = String(b.title ?? "");
+    const venue = String(b.venue ?? "");
+    const city = String(b.city ?? "");
+
+    if (!date)
+      return NextResponse.json(
+        { ok: false, error: "Fecha requerida" },
+        { status: 400 }
+      );
+    if (!startTime)
+      return NextResponse.json(
+        { ok: false, error: "Hora requerida" },
+        { status: 400 }
+      );
+    if (!city.trim())
+      return NextResponse.json(
+        { ok: false, error: "Ciudad requerida" },
+        { status: 400 }
+      );
 
     // Regla: Privado fuerza título y venue vacío
     const safeTitle = type === "Privado" ? "Evento Privado" : title.trim();
     const safeVenue = type === "Privado" ? "" : venue.trim();
 
     if (type !== "Privado") {
-      if (!safeTitle) return NextResponse.json({ ok: false, error: "Título requerido" }, { status: 400 });
-      if (!safeVenue) return NextResponse.json({ ok: false, error: "Lugar requerido" }, { status: 400 });
+      if (!safeTitle)
+        return NextResponse.json(
+          { ok: false, error: "Título requerido" },
+          { status: 400 }
+        );
+      if (!safeVenue)
+        return NextResponse.json(
+          { ok: false, error: "Lugar requerido" },
+          { status: 400 }
+        );
     }
 
     // Insert
-    const inserted = await sql`
+    const inserted = (await sql`
       INSERT INTO events (status, type, date, start_time, title, venue, city)
       VALUES (${status}, ${type}, ${date}, ${startTime}, ${safeTitle}, ${safeVenue}, ${city.trim()})
       RETURNING id, status, type, date, start_time, title, venue, city
-    `;
+    `) as EventRow[];
 
     const event = mapRow(inserted[0]);
     return NextResponse.json({ ok: true, event });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("POST /api/events error:", err);
     return NextResponse.json(
       { ok: false, error: "Error guardando evento" },
@@ -102,8 +139,12 @@ export async function POST(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
-    const body = await req.json().catch(() => null);
-    const id = String(body?.id ?? "").trim();
+    const body: unknown = await req.json().catch(() => null);
+
+    const b =
+      body && typeof body === "object" ? (body as Record<string, unknown>) : null;
+
+    const id = String(b?.id ?? "").trim();
 
     if (!id) {
       return NextResponse.json(
@@ -112,11 +153,11 @@ export async function DELETE(req: Request) {
       );
     }
 
-    const deleted = await sql`
+    const deleted = (await sql`
       DELETE FROM events
       WHERE id = ${id}
       RETURNING id
-    `;
+    `) as Array<{ id: string | number }>;
 
     if (!deleted?.length) {
       return NextResponse.json(
@@ -125,8 +166,8 @@ export async function DELETE(req: Request) {
       );
     }
 
-    return NextResponse.json({ ok: true, id });
-  } catch (err: any) {
+    return NextResponse.json({ ok: true, id: String(deleted[0].id) });
+  } catch (err: unknown) {
     console.error("DELETE /api/events error:", err);
     return NextResponse.json(
       { ok: false, error: "Error eliminando evento" },

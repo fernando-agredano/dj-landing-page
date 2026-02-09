@@ -468,9 +468,10 @@ export default function Events() {
         setError(null);
         const data = await fetchEventsFromApi(controller.signal);
         setEvents(data);
-      } catch (e: any) {
-        if (e?.name === "AbortError") return;
-        setError(e?.message || "Error cargando eventos");
+      } catch (e: unknown) {
+        if (e instanceof DOMException && e.name === "AbortError") return;
+        const msg = e instanceof Error ? e.message : "Error cargando eventos";
+        setError(msg);
       } finally {
         setLoading(false);
       }

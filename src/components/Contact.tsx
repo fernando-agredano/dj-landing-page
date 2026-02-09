@@ -251,8 +251,10 @@ export default function Contact() {
       setName("");
       setEmail("");
       setMessage("");
-    } catch (err: any) {
-      setErrorMsg(err?.message || "No se pudo enviar el mensaje.");
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error ? err.message : "No se pudo enviar el mensaje.";
+      setErrorMsg(msg);
     } finally {
       setLoadingForm(false);
     }
